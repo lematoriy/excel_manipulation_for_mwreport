@@ -15,7 +15,7 @@
 #             > if licenseID not in record_key[] AND
 #             > channelB_id=channel.replace('#','')
 #             > polB=polarization
-#             > if channelA_id=channelB_id AND polA=PolB
+#             > if same sitenames AND channelA_id=channelB_id AND polA=PolB
 #                 > add license ID to record_key[]
 #                 > grap AntB_size, AntB_height, TxB_pwr
 #                 > break
@@ -23,14 +23,14 @@
 #
 # NOTES:
 #   "Other" polarization - dual pol
-#   "Non-specific" - in both cases related to Vertical, might need to recchek
+#   "Non-specific" polarization - in both cases related to Vertical, might need to recchek
 
 import pandas as pd
 import re
 from pprint import pprint
 import csv
 
-ant_file = "C:/Work/01_Projects/0_architecture/MW_RFP/antennas.xlsx"
+ant_file = "C:/Work/01_Projects/0_architecture/MW_RFP/MW_report/antennas.xlsx"  # C:\Work\01_Projects\0_architecture\MW_RFP\MW_report\antennas.xlsx
 df = pd.read_excel(ant_file)
 ant_records = df.to_dict(orient="records")
 antennae = {}
@@ -38,7 +38,7 @@ for ant_ in ant_records:
     antennae[ant_["Tx Antenna Make"]] = ant_["Diameter"]
 
 
-rsm_file = "C:/Work/01_Projects/0_architecture/MW_RFP/RMS/rsm.xlsx"
+rsm_file = "C:/Work/01_Projects/0_architecture/MW_RFP/MW_report/RSM/rsm.xlsx"  # C:\Work\01_Projects\0_architecture\MW_RFP\MW_report\RSM\rsm.xlsx
 df = pd.read_excel(rsm_file)
 rsm_records = df.to_dict(orient="records")
 
@@ -81,6 +81,8 @@ for record in rsm_records:
         siteB_id = site_id(siteB1_name)
         link_name = siteA_id + "--" + siteB_id
         link_dict["link_name"] = link_name
+        link_dict["SiteA_ID"] = siteA_id
+        link_dict["SiteB_ID"] = siteB_id
         link_dict["polarization"] = polA_
         link_dict["channel"] = channelA_id
         link_dict["emission"] = record["Emission"]
