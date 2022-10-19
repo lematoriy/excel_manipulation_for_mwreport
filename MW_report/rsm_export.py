@@ -29,6 +29,7 @@ import pandas as pd
 import re
 from pprint import pprint
 import csv
+import geopy.distance
 
 ant_file = "C:/Work/01_Projects/0_architecture/MW_RFP/MW_report/antennas.xlsx"  # C:\Work\01_Projects\0_architecture\MW_RFP\MW_report\antennas.xlsx
 df = pd.read_excel(ant_file)
@@ -79,11 +80,20 @@ for record in rsm_records:
         siteB1_name = str(record["Rx Loc Name"])
         siteA_id = site_id(siteA1_name)
         siteB_id = site_id(siteB1_name)
+        siteA_coord=(record["Tx NZGD2000 Lat"],record["Tx NZGD2000 Long"])
+        siteB_coord=(record["Rx NZGD2000 Lat"],record["Rx NZGD2000 Long"])
+        link_len=geopy.distance.geodesic(siteA_coord,siteB_coord).km
         link_name = siteA_id + "--" + siteB_id
         link_dict["link_name"] = link_name
         link_dict["SiteA_ID"] = siteA_id
+        link_dict["SiteA_Lat"]=record["Tx NZGD2000 Lat"]
+        link_dict["SiteA_Long"]=record["Tx NZGD2000 Long"]
         link_dict["SiteB_ID"] = siteB_id
+        link_dict["SiteB_Lat"]=record["Rx NZGD2000 Lat"]
+        link_dict["SiteB_Long"]=record["Rx NZGD2000 Long"]
+        link_dict["Distance"]=round(link_len,2)
         link_dict["polarization"] = polA_
+        link_dict["Freq_Band"]=re.findall(r"^\d+",channelA_id)[0]
         link_dict["channel"] = channelA_id
         link_dict["emission"] = record["Emission"]
         link_dict["licenseA"] = lic_1
